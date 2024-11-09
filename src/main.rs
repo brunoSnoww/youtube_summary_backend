@@ -1,9 +1,9 @@
 use std::io::Error;
 
-use blob_dl::yt_audio::get_yt_audio;
 use yt_summarizer_backend::{
     audio::{convert_mp4_to_wav, process_transcript, resample_audio, transcribe_audio},
     openai_api::summarize_text,
+    yt_audio::yt_audio::get_yt_audio,
 };
 
 #[tokio::main]

@@ -155,21 +155,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b048fb63fd8b5923fc5aa7b340d8e156aec7ec02f0c78fa8a6ddc2613f6f71de"
 
 [[package]]
-name = "blob-dl"
-version = "1.0.2"
-dependencies = [
- "clap",
- "colored",
- "dialoguer",
- "execute",
- "serde",
- "serde_json",
- "spinoff",
- "url",
- "which",
-]
-
-[[package]]
 name = "bumpalo"
 version = "3.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2755,14 +2740,22 @@ dependencies = [
 name = "yt_summarizer_backend"
 version = "0.1.0"
 dependencies = [
- "blob-dl",
+ "clap",
+ "colored",
+ "dialoguer",
  "dotenv",
+ "execute",
  "openai",
  "openai_api_rust",
  "regex",
  "reqwest 0.11.27",
  "rustube",
+ "serde",
+ "serde_json",
+ "spinoff",
  "tokio",
+ "url",
+ "which",
 ]
 
 [[package]]
