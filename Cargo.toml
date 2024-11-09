@@ -5,6 +5,7 @@ edition = "2021"
 
 
 [dependencies]
+axum = "0.6"
 openai = "1.0.0-alpha.16"
 rustube = "0.6"
 tokio = { version = "1", features = ["full"] }
@@ -21,6 +22,7 @@ serde_json = "1.0.94"
 spinoff = "0.8.0"
 url = "2.3.1"
 which = "4.4.0"
+hyper = { version = "0.14", features = ["full"] }
 
 
 [[bin]]

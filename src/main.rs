@@ -1,32 +1,42 @@
-use std::io::Error;
+use axum::{extract::Json, http::StatusCode, response::IntoResponse};
+use axum::{routing::post, Router};
+use std::net::SocketAddr;
+use yt_summarizer_backend::process_youtube_video;
 
-use yt_summarizer_backend::{
-    audio::{convert_mp4_to_wav, process_transcript, resample_audio, transcribe_audio},
-    openai_api::summarize_text,
-    yt_audio::yt_audio::get_yt_audio,
-};
+use serde::{Deserialize, Serialize};
+
+#[derive(Deserialize)]
+struct SummarizeRequest {
+    youtube_url: String,
+}
+
+#[derive(Serialize)]
+struct SummarizeResponse {
+    summary: String,
+}
+
+async fn summarize_handler(
+    Json(payload): Json<SummarizeRequest>,
+) -> Result<Json<SummarizeResponse>, (StatusCode, String)> {
+    // Extract the YouTube URL from the request
+    let youtube_url = payload.youtube_url;
+    // Call your existing functions
+    match process_youtube_video::process_youtube_video(&youtube_url).await {
+        Ok(summary) => Ok(Json(SummarizeResponse { summary })),
+        Err(e) => Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string())),
+    }
+}
 
 #[tokio::main]
-async fn main() -> Result<(), Error> {
-    let path = "/Users/brunoneves/Desktop/personalProjects/yt_summarizer/rust-lambda-book";
-    let input_mp4 = format!("{}/{}", path, "audio.mp4");
-    let input_wav = format!("{}/{}", path, "audio.wav");
-    let output = format!("{}/{}", path, "audio16k.wav");
-    let model_path =
-        "/Users/brunoneves/Desktop/personalProjects/yt_summarizer/whisper.cpp/models/ggml-base.bin";
-    let audio_path =
-        "/Users/brunoneves/Desktop/personalProjects/yt_summarizer/rust-lambda-book/audio16k.wav";
-    get_yt_audio("");
-    let _ = convert_mp4_to_wav(&input_mp4, &input_wav);
-    let _ = resample_audio(&input_wav, &output);
-    if let Ok(transcript) = transcribe_audio(audio_path, model_path) {
-        // Process the transcript with timestamps removed
-        let remove_timestamps = true;
-        let processed_text = process_transcript(&transcript, remove_timestamps);
+async fn main() {
+    // Build our application with a route
+    let app = Router::new().route("/summarize", post(summarize_handler));
 
-        // Now you can pass `processed_text` to the summarization function
-        let summary = summarize_text(&processed_text).unwrap();
-        println!("{summary}");
-    }
-    Ok(())
+    // Run the server
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    println!("Server is running on {}", addr);
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }

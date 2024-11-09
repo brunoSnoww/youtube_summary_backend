@@ -47,51 +47,7 @@ mod format {
         media_selected: &MediaSelection,
         playlist_id: usize,
     ) -> BlobResult<VideoQualityAndFormatPreferences> {
-        return Ok(VideoQualityAndFormatPreferences::SmallestSize);
-        // A list of all the format options that can be picked
-        let mut format_options: Vec<&str> = vec![];
-
-        // Default options
-        format_options.push(BEST_QUALITY_PROMPT_SINGLE_VIDEO);
-        format_options.push(SMALLEST_QUALITY_PROMPT_SINGLE_VIDEO);
-
-        if which("ffmpeg").is_ok() {
-            // If ffmpeg is installed in the system
-            // Some features are only available with ffmpeg
-            format_options.push(CONVERT_FORMAT_PROMPT_VIDEO_SINGLE_VIDEO);
-            format_options.push(YT_FORMAT_PROMPT_SINGLE_VIDEO);
-
-            // Set up a prompt for the user
-            let user_selection = Select::with_theme(&ColorfulTheme::default())
-                .with_prompt("Which quality or format do you want to apply to the video?")
-                .default(0)
-                .items(&format_options)
-                .interact_on(term)?;
-            match user_selection {
-                0 => Ok(VideoQualityAndFormatPreferences::BestQuality),
-                1 => Ok(VideoQualityAndFormatPreferences::SmallestSize),
-                2 => convert_to_format(term, media_selected),
-                _ => get_format_from_yt(term, url, media_selected, playlist_id),
-            }
-        } else {
-            println!("{}", FFMPEG_UNAVAILABLE_WARNING);
-
-            format_options.push(YT_FORMAT_PROMPT_SINGLE_VIDEO);
-
-            // Set up a prompt for the user
-            let user_selection = Select::with_theme(&ColorfulTheme::default())
-                .with_prompt("Which quality or format do you want to apply to the video?")
-                .default(0)
-                .items(&format_options)
-                .interact_on(term)?;
-
-            // See individual function documentations for more context
-            match user_selection {
-                0 => Ok(VideoQualityAndFormatPreferences::BestQuality),
-                1 => Ok(VideoQualityAndFormatPreferences::SmallestSize),
-                _ => get_format_from_yt(term, url, media_selected, playlist_id),
-            }
-        }
+        Ok(VideoQualityAndFormatPreferences::SmallestSize)
     }
 
     /// Presents the user with the formats youtube provides directly for download, without the need for ffmpeg
