@@ -1,0 +1,22 @@
+[package]
+name = "yt_summarizer_backend"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+openai = "1.0.0-alpha.16"
+rustube = "0.6"
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.11", features = ["stream"] }
+dotenv = "*"
+openai_api_rust = "0.1.9"
+regex = "*"
+
+[dependencies.blob-dl]
+path = "./blob-dl/"
+
+[[bin]]
+name = "yt_summarizer_backend"
+path = "src/main.rs"
+test = false
