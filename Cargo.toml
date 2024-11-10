@@ -23,7 +23,7 @@ spinoff = "0.8.0"
 url = "2.3.1"
 which = "4.4.0"
 hyper = { version = "0.14", features = ["full"] }
-
+tower-http = { version = "0.3", features = ["cors" ] }
 
 [[bin]]
 name = "yt_summarizer_backend"
