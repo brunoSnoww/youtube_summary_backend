@@ -19,7 +19,7 @@ pub fn summarize_text(text: &str) -> Result<String, Box<dyn std::error::Error>> 
     let auth = Auth::from_env()?;
     let openai = OpenAI::new(auth, "https://api.openai.com/v1/");
 
-    let is_political = false; // Set this based on your logic
+    let is_political = true; // Set this based on your logic
 
     let user_prompt = if is_political {
         format!(

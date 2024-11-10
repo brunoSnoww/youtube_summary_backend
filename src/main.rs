@@ -1,9 +1,10 @@
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use axum::{routing::post, Router};
-use std::net::SocketAddr;
-use yt_summarizer_backend::process_youtube_video;
-
+use hyper::Method;
 use serde::{Deserialize, Serialize};
+use std::net::SocketAddr;
+use tower_http::cors::{Any, CorsLayer};
+use yt_summarizer_backend::process_youtube_video;
 
 #[derive(Deserialize)]
 struct SummarizeRequest {
@@ -29,8 +30,15 @@ async fn summarize_handler(
 
 #[tokio::main]
 async fn main() {
-    // Build our application with a route
-    let app = Router::new().route("/summarize", post(summarize_handler));
+    // Build our application with a route and CORS
+    let app = Router::new()
+        .route("/summarize", post(summarize_handler))
+        .layer(
+            CorsLayer::new()
+                .allow_origin(Any) // In production, specify your frontend's origin
+                .allow_methods([Method::POST])
+                .allow_headers(Any),
+        );
 
     // Run the server
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
