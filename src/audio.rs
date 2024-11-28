@@ -1,17 +1,7 @@
 use regex::Regex;
-use std::io;
+use std::path::Path;
 use std::process::Command;
-/// Resamples an audio file to 16,000 Hz and converts it to mono using SoX.
-///
-/// # Arguments
-///
-/// * `input_file` - The path to the input audio file.
-/// * `output_file` - The path where the resampled audio will be saved.
-///
-/// # Returns
-///
-/// * `Ok(())` if the command executes successfully.
-/// * `Err(io::Error)` if there is an error executing the command.
+use std::{env, fs, io};
 pub fn resample_audio(input_file: &str, output_file: &str) -> io::Result<()> {
     let status = Command::new("sox")
         .args([input_file, "-r", "16000", "-c", "1", output_file])
@@ -54,11 +44,27 @@ pub fn convert_mp4_to_wav(input_path: &str, output_path: &str) -> io::Result<()>
 }
 
 pub fn transcribe_audio(audio_path: &str, model_path: &str) -> io::Result<String> {
-    let output =
-        Command::new("/Users/brunoneves/Desktop/personalProjects/yt_summarizer/whisper.cpp/main")
-            .args(["-m", model_path, "-f", audio_path])
-            .output()?;
+    // Resolve the current working directory
+    let current_dir = env::current_dir()?;
 
+    // Construct the path to the whisper executable relative to the current directory
+    let whisper_exec = current_dir.join("bin/whisper");
+
+    println!("fffuuuuuuuuuuuuuuuuuuck");
+    // Ensure the executable path is valid
+    if !whisper_exec.exists() {
+        return Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("Executable not found at {:?}", whisper_exec),
+        ));
+    }
+    println!("{:?}", whisper_exec);
+    // Run the transcription command
+    let output = Command::new(whisper_exec)
+        .args(["-m", model_path, "-f", audio_path])
+        .output()?;
+
+    println!("yeahhhhhhhhh");
     if output.status.success() {
         let transcription = String::from_utf8_lossy(&output.stdout).to_string();
         Ok(transcription)
@@ -72,19 +78,8 @@ pub fn transcribe_audio(audio_path: &str, model_path: &str) -> io::Result<String
     }
 }
 
-/// Processes the transcript by optionally removing timestamps.
-///
-/// # Arguments
-///
-/// * `transcript` - The transcript text containing timestamps and spoken text.
-/// * `remove_timestamps` - A boolean flag indicating whether to remove timestamps.
-///
-/// # Returns
-///
-/// * A `String` containing the processed transcript.
 pub fn process_transcript(transcript: &str, remove_timestamps: bool) -> String {
     if remove_timestamps {
-        // Remove timestamps and extract the spoken text
         extract_text(transcript)
     } else {
         // Return the transcript as is
@@ -92,15 +87,6 @@ pub fn process_transcript(transcript: &str, remove_timestamps: bool) -> String {
     }
 }
 
-/// Extracts the spoken text from the transcript by removing timestamps.
-///
-/// # Arguments
-///
-/// * `transcript` - The transcript text containing timestamps and spoken text.
-///
-/// # Returns
-///
-/// * A `String` containing only the spoken text.
 fn extract_text(transcript: &str) -> String {
     // Regular expression to match lines with timestamps
     let re =
@@ -121,4 +107,36 @@ fn extract_text(transcript: &str) -> String {
     }
 
     extracted_text.trim().to_string()
+}
+
+pub fn delete_audio_files(directory: &Path) -> io::Result<()> {
+    // Resolve the directory to an absolute path
+    let resolved_directory = if directory == Path::new(".") {
+        env::current_dir()? // Get the current working directory
+    } else {
+        directory.to_path_buf()
+    };
+
+    // Ensure the path points to a directory
+    if !resolved_directory.is_dir() {
+        return Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            "Directory does not exist",
+        ));
+    }
+
+    // Iterate over files and delete those starting with "audio"
+    for entry in fs::read_dir(&resolved_directory)? {
+        let entry = entry?;
+        let path = entry.path();
+
+        if path.is_file() {
+            if let Some(file_name) = path.file_name().and_then(|n| n.to_str()) {
+                if file_name.starts_with("audio") {
+                    fs::remove_file(path)?;
+                }
+            }
+        }
+    }
+    Ok(())
 }

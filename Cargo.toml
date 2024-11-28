@@ -2,6 +2,7 @@
 name = "yt_summarizer_backend"
 version = "0.1.0"
 edition = "2021"
+target = "x86_64-unknown-linux-musl"
 
 
 [dependencies]
@@ -13,19 +14,18 @@ reqwest = { version = "0.11", features = ["stream"] }
 dotenv = "*"
 openai_api_rust = "0.1.9"
 regex = "*"
-clap = { version = "4.0.29", features = ["derive"] }
-colored = "2.0.0"
-dialoguer = "0.10.2"
 execute = "0.2.11"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.94"
-spinoff = "0.8.0"
 url = "2.3.1"
 which = "4.4.0"
 hyper = { version = "0.14", features = ["full"] }
 tower-http = { version = "0.3", features = ["cors" ] }
+[dependencies.uuid]
+version = "1.11.0"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
 
-[[bin]]
-name = "yt_summarizer_backend"
-path = "src/main.rs"
-test = false

@@ -1,4 +1,4 @@
-use axum::{extract::Json, http::StatusCode, response::IntoResponse};
+use axum::{extract::Json, http::StatusCode};
 use axum::{routing::post, Router};
 use hyper::Method;
 use serde::{Deserialize, Serialize};
@@ -41,8 +41,9 @@ async fn main() {
         );
 
     // Run the server
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    println!("Server is running on {}", addr);
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+
+    println!("Server running at {}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await

@@ -1,7 +1,5 @@
 use std::io::Write;
 
-use colored::Colorize;
-
 pub type BlobResult<T> = Result<T, BlobdlError>;
 
 /// ### The all-encompassing error type used in this project
@@ -32,84 +30,11 @@ pub enum BlobdlError {
     CommandNotSpawned,
 }
 
-// Things blob-dl regularly tells the user
-pub const FFMPEG_UNAVAILABLE_WARNING: &str = "It looks like ffmpeg and ffprobe aren't installed, which means that some of blob-dl's features aren't available!\nPlease install them for a fuller experience";
-
-pub const LONG_ABOUT: &str = "A command line tool used to make downloading youtube videos in various formats easy\nIf you are having problems passing a URL as an argument, try wrapping it in quotes (\"\")!\n\nFor more details check out the github page https://github.com/MicheleCioccarelli/blob-dl\nRecommended yt-dlp version: 2024.10.22";
-
-pub const SHORT_ABOUT: &str = "A command line tool used to make downloading youtube videos in various formats easy\nIf you are having problems passing a URL as an argument, try wrapping it in quotes (\"\")!\n\nFor more details check out the github page https://github.com/MicheleCioccarelli/blob-dl";
-
-pub const YTDLP_NOT_INSTALLED: &str = "blob-dl is a wrapper around yt-dlp and cannot function without it.\nPlease install yt-dlp from the official github page: https://github.com/yt-dlp/yt-dlp";
-
-pub const BEST_QUALITY_PROMPT_PLAYLIST: &str = "Best possible quality for each video";
-
-pub const BEST_QUALITY_PROMPT_SINGLE_VIDEO: &str = "Best possible quality";
-
-pub const SMALLEST_QUALITY_PROMPT_PLAYLIST: &str = "Smallest file size for each video";
-
-pub const SMALLEST_QUALITY_PROMPT_SINGLE_VIDEO: &str = "Smallest file size";
-
-pub const YT_FORMAT_PROMPT_PLAYLIST: &str = "Choose a format to download to every video in (only formats available for all videos are shown)";
-
-pub const YT_FORMAT_PROMPT_SINGLE_VIDEO: &str = "Choose a format to download the video in";
-
-pub const CONVERT_FORMAT_PROMPT_VIDEO_PLAYLIST: &str =
-    "Choose a format to recode all the videos to";
-
-pub const CONVERT_FORMAT_PROMPT_VIDEO_SINGLE_VIDEO: &str = "Choose a format to recode the video to";
-
-pub const CONVERT_FORMAT_PROMPT_AUDIO: &str = "Choose an audio format to convert the audios to";
-
 pub const SEE_HELP_PAGE: &str = "Type blob-dl --help for a list of all the available options";
 
 pub const USAGE_MSG: &str = "Usage: blob-dl [OPTIONS] [URL]";
 
-pub const ERROR_RETRY_PROMPT: &str = "The following videos weren't downloaded but retrying might help, choose which videos to re-download [space bar to select]";
-
-pub const UNRECOVERABLE_ERROR_PROMPT: &str =
-    "The following videos could not be downloaded due to unrecoverable errors";
-
-pub const DEBUG_REPORT_PROMPT: &str = "By default new errors are flagged as recoverable, if any unrecoverable errors are flagged incorrectly please report them to the github page";
-
-pub const SELECT_ALL: &str = "Select all\n";
-pub const SELECT_NOTHING: &str = "Don't re-download anything\n";
-
-pub const WRONG_YTDLP_VERSION: &str = "It looks like you have a yt-dlp version which may not work with blob-dl as expected: you may not be able to fetch formats from youtube.\n\
-    To fix this you can update your yt-dlp installation to the correct version with the command: sudo yt-dlp --update-to 2024.10.22";
-
-pub const COMMAND_NOT_SPAWNED: &str = "An instance of ytdlp (used to check which version of the program you have installed) could not be spawned";
-
-// Youtube's error messages
-pub const PRIVATE_VIDEO: &str =
-    " Private video. Sign in if you've been granted access to this video";
-
-pub const NONEXISTENT_PLAYLIST: &str = " YouTube said: The playlist does not exist.";
-
-pub const HOMEPAGE_REDIRECT: &str =
-    " The channel/playlist does not exist and the URL redirected to youtube.com home page";
-
-pub const NETWORK_FAIL: &str = " Unable to download API page: <urlopen error [Errno -3] Temporary failure in name resolution> (caused by URLError(gaierror(-3, 'Temporary failure in name resolution')))";
-
-pub const VIOLENT_VIDEO: &str =
-    " This video has been removed for violating YouTube's policy on violent or graphic content";
-
-pub const REMOVED_VIDEO: &str = " Video unavailable. This video has been removed by the uploader";
-
-pub const VIDEO_NOT_FOUND: &str = " not found, unable to continue";
-
-pub const YTDLP_GAVE_UP: &str = " error: HTTP Error 403: Forbidden. Giving up after 10 retries";
-
-pub const NO_API_PAGE: &str = " Unable to download API page: HTTP Error 404: Not Found (caused by <HTTPError 404: 'Not Found'>); please report this issue on https://github.com/yt-dlp/yt-dlp/issues?q= , filling out the appropriate issue template. Confirm you are on the latest version using yt-dlp -U";
-
-pub const ENCODER_STREAM_ERROR: &str = " Postprocessing: Error selecting an encoder for stream 0:1";
-
-pub const NONEXISTENT_VIDEO: &str = "Incomplete data received";
-
-// All copyright error messages begin with this
-pub const VIDEO_UNAVAILABLE: &str = " Video unavailable";
-// blob-dl custom error messages
-pub const BROKEN_URL_ERR: &str =
-    "The url provided wasn't recognized, try using a regular youtube url";
+const BROKEN_URL_ERR: &str = "The url provided wasn't recognized, try using a regular youtube url";
 
 pub const UNSUPPORTED_WEBSITE_ERR: &str = "Currently blob-dl only supports downloading youtube videos or playlists, not content from other websites";
 
@@ -139,7 +64,7 @@ impl BlobdlError {
     // Output an error message according to the error at hand
     pub fn report(&self) {
         eprintln!("\n{}\n", USAGE_MSG);
-        eprint!("{}: ", "ERROR".red());
+        eprint!("{}: ", "ERROR");
 
         let _ = std::io::stdout().flush();
 
@@ -203,20 +128,12 @@ impl From<std::str::Utf8Error> for BlobdlError {
 // Used in run.rs
 /// Stores the information found in yt-dlp's error-lines output
 #[derive(Debug)]
-pub(crate) struct YtdlpError {
+pub struct YtdlpError {
     video_id: String,
     error_msg: String,
 }
 
-impl YtdlpError {
-    pub fn video_id(&self) -> &String {
-        &self.video_id
-    }
-
-    pub fn error_msg(&self) -> &String {
-        &self.error_msg
-    }
-}
+impl YtdlpError {}
 
 impl std::fmt::Display for YtdlpError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
