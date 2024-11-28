@@ -45,12 +45,10 @@ pub fn convert_mp4_to_wav(input_path: &str, output_path: &str) -> io::Result<()>
 
 pub fn transcribe_audio(audio_path: &str, model_path: &str) -> io::Result<String> {
     // Resolve the current working directory
-    let current_dir = env::current_dir()?;
 
     // Construct the path to the whisper executable relative to the current directory
-    let whisper_exec = current_dir.join("bin/whisper");
+    let whisper_exec = Path::new("/whisper.cpp/whisper");
 
-    println!("fffuuuuuuuuuuuuuuuuuuck");
     // Ensure the executable path is valid
     if !whisper_exec.exists() {
         return Err(io::Error::new(
@@ -58,13 +56,11 @@ pub fn transcribe_audio(audio_path: &str, model_path: &str) -> io::Result<String
             format!("Executable not found at {:?}", whisper_exec),
         ));
     }
-    println!("{:?}", whisper_exec);
     // Run the transcription command
     let output = Command::new(whisper_exec)
         .args(["-m", model_path, "-f", audio_path])
         .output()?;
 
-    println!("yeahhhhhhhhh");
     if output.status.success() {
         let transcription = String::from_utf8_lossy(&output.stdout).to_string();
         Ok(transcription)

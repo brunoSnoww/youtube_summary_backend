@@ -1,4 +1,4 @@
-use std::{error::Error, path::PathBuf};
+use std::{error::Error, path::Path};
 
 use crate::{
     audio::{
@@ -17,12 +17,10 @@ pub async fn process_youtube_video(youtube_url: &str) -> Result<String, Box<dyn 
     let input_mp4 = current_dir.join("audio.mp4");
     let input_wav = current_dir.join("audio.wav");
     let output_wav = current_dir.join("audio16k.wav");
-    let model_path = current_dir.join("models/ggml-base.bin");
+    let model_path = Path::new("/whisper.cpp/models/ggmml-base.bin");
 
     // Step 1: Download YouTube audio
     get_yt_audio(youtube_url);
-
-    println!("{:?}", youtube_url);
 
     // Step 2: Convert MP4 to WAV
     convert_mp4_to_wav(input_mp4.to_str().unwrap(), input_wav.to_str().unwrap())?;
