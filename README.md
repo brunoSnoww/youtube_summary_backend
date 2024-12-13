@@ -1,4 +1,4 @@
-# youtube_summary_backend
+# youtube_summary_backend (WIP)
 Repo for testing a program that downloads audio from Youtube and summarises it with AI
 
 ```bash
