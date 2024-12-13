@@ -19,7 +19,7 @@ pub fn summarize_text(text: &str) -> Result<String, Box<dyn std::error::Error>> 
     let auth = Auth::from_env()?;
     let openai = OpenAI::new(auth, "https://api.openai.com/v1/");
 
-    let is_political = true; // Set this based on your logic
+    let is_political = false; // Set this based on your logic
 
     let user_prompt = if is_political {
         format!(
@@ -28,9 +28,9 @@ pub fn summarize_text(text: &str) -> Result<String, Box<dyn std::error::Error>> 
     )
     } else {
         format!(
-        "Please provide a concise summary of the following transcript. Output the result in the following JSON format:\n\n{{\n  \"summary\": \"<summary>\"\n}}\n\nTranscript:\n{}",
-        text
-    )
+            "Please provide a detailed description of the following transcript.\n{}",
+            text
+        )
     };
 
     let body = ChatBody {
@@ -48,7 +48,7 @@ pub fn summarize_text(text: &str) -> Result<String, Box<dyn std::error::Error>> 
     messages: vec![
         Message {
             role: Role::System,
-            content: "You are an assistant that summarizes transcripts and provides political bias analysis when required.".to_string(),
+            content: "You are an assistant that provides detailes summaries with the input given to you".to_string(),
         },
         Message {
             role: Role::User,

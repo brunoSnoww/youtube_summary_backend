@@ -47,7 +47,14 @@ pub fn transcribe_audio(audio_path: &str, model_path: &str) -> io::Result<String
     // Resolve the current working directory
 
     // Construct the path to the whisper executable relative to the current directory
-    let whisper_exec = Path::new("/whisper.cpp/whisper");
+
+    let current_dir = std::env::current_dir().expect("Failed to get current directory");
+
+    // Relative path
+    let whisper_exec_relative = Path::new("whisper.cpp/build/bin/main");
+
+    // Combine current directory with the relative path
+    let whisper_exec = current_dir.join(whisper_exec_relative);
 
     // Ensure the executable path is valid
     if !whisper_exec.exists() {

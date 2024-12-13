@@ -17,8 +17,12 @@ pub async fn process_youtube_video(youtube_url: &str) -> Result<String, Box<dyn 
     let input_mp4 = current_dir.join("audio.mp4");
     let input_wav = current_dir.join("audio.wav");
     let output_wav = current_dir.join("audio16k.wav");
-    let model_path = Path::new("/whisper.cpp/models/ggmml-base.bin");
+    let current_dir = std::env::current_dir().expect("Failed to get current directory");
 
+    let model_path_relative = Path::new("whisper.cpp/models/ggml-base.en.bin");
+
+    // Combine current directory with the relative paths
+    let model_path = current_dir.join(model_path_relative);
     // Step 1: Download YouTube audio
     get_yt_audio(youtube_url);
 
