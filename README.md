@@ -1,12 +1,18 @@
 # youtube_summary_backend (WIP)
 Repo for testing a program that downloads audio from Youtube and summarises it with AI
 
+Terminal 1
 ```bash
 export OPENAI_API_KEY=your-key
+cargo run
 ```
 
+Terminal 2
 ```bash
-cargo run "https://www.youtube.com/watch?v=vAJDoLghERY"
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"youtube_url": "https://www.youtube.com/watch?v=fMCN-b0ic_k", "language": "en"}' \
+  http://localhost:3000/summarize
 
-The speaker acknowledges declining the call of the person they saw on the caller ID. They explain that the time frame for calling back depends on how unpleasant the person is - minor annoyance may get a call back in the next hour, while pushy individuals may not hear back for the rest of the year.
+
+{"summary":"The transcript provided is from the song \"Never Gonna Give You Up\" by Rick Astley. The lyrics describe a person who is expressing their desire to end a relationship, indicating that they want to make the other person cry and say goodbye. The tone of the lyrics suggests a sense of sadness or resignation in the decision to part ways with the other person."}%
 ```
