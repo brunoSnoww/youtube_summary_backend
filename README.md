@@ -15,5 +15,8 @@ curl -X POST -H "Content-Type: application/json" \
   http://localhost:3000/summarize
 
 
-{"summary":"The transcript provided is from the song \"Never Gonna Give You Up\" by Rick Astley. The lyrics describe a person who is expressing their desire to end a relationship, indicating that they want to make the other person cry and say goodbye. The tone of the lyrics suggests a sense of sadness or resignation in the decision to part ways with the other person."}%
+{"summary":"The transcript provided is from the song \"Never Gonna Give You Up\" by Rick Astley.
+The lyrics describe a person who is expressing their desire to end a relationship, indicating that
+they want to make the other person cry and say goodbye. The tone of the lyrics suggests a sense of sadness
+or resignation in the decision to part ways with the other person."}%
 ```
