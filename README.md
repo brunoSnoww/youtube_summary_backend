@@ -3,6 +3,7 @@ Repo for testing a program that downloads audio from Youtube and summarises it w
 
 Terminal 1
 ```bash
+make all
 export OPENAI_API_KEY=your-key
 cargo run
 ```
